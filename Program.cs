@@ -4,13 +4,13 @@ class Program
 {
     static int Main(string[] args)
     {
-        Argument<double[]> numbers = new("Input Numbers")
+        Argument<double[]> inputNumbersArgument = new("Input Numbers")
         {
             Description = "4 input numbers to generate a expression to equal 24."
         };
 
         // Validate that the user has given 4 inputs
-        numbers.Validators.Add(result =>
+        inputNumbersArgument.Validators.Add(result =>
         {
             double[] values = result.GetValueOrDefault<double[]>();
             
@@ -21,12 +21,15 @@ class Program
         });
 
         RootCommand rootCommand = new("24 Game");
-        rootCommand.Arguments.Add(numbers);
+        rootCommand.Arguments.Add(inputNumbersArgument);
 
         rootCommand.SetAction(parseResult =>
         {
-            double[] result = parseResult.GetValue(numbers)!;
-            Console.WriteLine($"Input: {String.Join(",", result)}");
+            double[] inputNumbers = parseResult.GetValue(inputNumbersArgument)!;
+            Console.WriteLine($"Input: {String.Join(',', inputNumbers)}");
+
+            new Game(inputNumbers);
+            
             return 0;
         });
 
