@@ -5,12 +5,11 @@ class Game
         List<string> results = new();
 
         GenerateNumberPermutations(inputNumbers);
+        GenerateOperationSignPermutations();
     }
     
     private void GenerateNumberPermutations(double[] numbers)
-    {
-        int count = 0;
-        
+    {        
         void Swap(int index1, int index2)
         {
             double temp = numbers[index1];
@@ -23,7 +22,6 @@ class Game
             if (startIndex == numbers.Length) 
             {
                 results.Add(numbers);
-                Console.WriteLine($"{count++}. {String.Join(',', numbers)}");
             }
             
             for(int i = startIndex; i < numbers.Length; i++) 
@@ -31,13 +29,30 @@ class Game
                 Swap(startIndex, i);
                 RecursiveFind(startIndex + 1, results);
                 
-                // Restore original order for next iteration
+                // Restore original order for the next iteration
                 Swap(startIndex, i);
             }
         }
 
         HashSet<double[]> results = new();
         RecursiveFind(0, results);
+    }
+    
+    private void GenerateOperationSignPermutations()
+    {
+        char[] operations = new[] { '+', '-', '*', '/' };
+        HashSet<char[]> results = new();
+        
+        foreach (char firstOperation in operations)
+        {
+            foreach (char secondOperation in operations)
+            {
+                foreach (char thirdOperation in operations)
+                {
+                    results.Add(new [] { firstOperation, secondOperation, thirdOperation });
+                }
+            }
+        }
     }
     
     private List<string> GenerateExpressions(double[] numbers, char[] operations) 
