@@ -2,11 +2,16 @@
 
 class Program
 {
+    const string GameDescription = """
+    24 Game
+    Given 4 numbers, this program will try to find all possible expressions to make 24.
+    """;
+
     static int Main(string[] args)
     {
         Argument<double[]> inputNumbersArgument = new("Input Numbers")
         {
-            Description = "4 input numbers to generate a expression to equal 24."
+            Description = "4 input numbers used to generate expressions to make 24."
         };
 
         // Validate that the user has given 4 inputs
@@ -20,13 +25,12 @@ class Program
             }
         });
 
-        RootCommand rootCommand = new("24 Game");
+        RootCommand rootCommand = new(GameDescription);
         rootCommand.Arguments.Add(inputNumbersArgument);
 
         rootCommand.SetAction(parseResult =>
         {
             double[] inputNumbers = parseResult.GetValue(inputNumbersArgument)!;
-            Console.WriteLine($"Input: {String.Join(',', inputNumbers)}");
 
             new Game(inputNumbers);
             

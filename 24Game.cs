@@ -1,19 +1,58 @@
+using NCalc;
+
 class Game
 {
+    /// <summary>
+    /// Represents an instance of the 24 game.
+    /// Given 4 numbers it will try to find and list all possible solutions to make 24
+    /// </summary>
     public Game(double[] inputNumbers)
     {
-        List<string> results = new();
+        Console.WriteLine($"Input: {String.Join(',', inputNumbers)}" + Environment.NewLine);
+        
+        HashSet<string> solutions = new();
 
         HashSet<double[]> numberPermutations = GenerateNumberPermutations(inputNumbers);
         HashSet<char[]> operationPermutations = GenerateOperationSignPermutations();
         
+        CalculateSolutions(solutions, numberPermutations, operationPermutations);
+
+        PrintSolutions(solutions);
+    }
+
+    private void CalculateSolutions(HashSet<string> solutions, HashSet<double[]> numberPermutations, HashSet<char[]> operationPermutations)
+    {
         foreach (double[] numberSet in numberPermutations)
         {
             foreach (char[] operatorSet in operationPermutations)
             {
-                List<string> expressions = GenerateExpressions(numberSet, operatorSet);
-                expressions.ForEach(ex => Console.WriteLine(ex));
-                break;
+                HashSet<string> expressions = GenerateExpressions(numberSet, operatorSet);
+
+                foreach (string expression in expressions)
+                {
+                    double result = Convert.ToDouble(new Expression(expression).Evaluate());
+                    if (result == 24)
+                    {
+                        solutions.Add(expression);
+                    }
+                }
+            }
+        }
+    }
+
+    private void PrintSolutions(HashSet<string> solutions)
+    {
+        if (solutions.Count == 0)
+        {
+            Console.WriteLine("No solution");
+        }
+        else
+        {
+            Console.WriteLine($"{solutions.Count} solutions found" + Environment.NewLine);
+            Console.WriteLine("These Expressions result in 24:");
+            foreach (string solution in solutions)
+            {
+                Console.WriteLine(solution);
             }
         }
     }
@@ -31,7 +70,7 @@ class Game
         {
             if (startIndex == numbers.Length)
             {
-                results.Add(numbers);
+                results.Add(new[] { numbers[0], numbers[1], numbers[2], numbers[3] });
             }
 
             for (int i = startIndex; i < numbers.Length; i++)
@@ -69,9 +108,9 @@ class Game
         return results;
     }
 
-    private List<string> GenerateExpressions(double[] numbers, char[] operations)
+    private HashSet<string> GenerateExpressions(double[] numbers, char[] operations)
     {
-        return new List<string>
+        return new HashSet<string>
         {
             $"{numbers[0]}{operations[0]}{numbers[1]}{operations[1]}{numbers[2]}{operations[2]}{numbers[3]}", // x _ x _ x _ x
             $"({numbers[0]}{operations[0]}{numbers[1]}){operations[1]}{numbers[2]}{operations[2]}{numbers[3]}", // (x _ x) _ x _ x
