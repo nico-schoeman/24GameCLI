@@ -4,19 +4,29 @@ class Program
 {
     static int Main(string[] args)
     {
-        Argument<int[]> numbers = new("Input Numbers")
+        Argument<double[]> numbers = new("Input Numbers")
         {
-            Description = "The input numbers to generate a equasion for to equal 24.",
-            Arity = new ArgumentArity(4, 4)
+            Description = "4 input numbers to generate a expression to equal 24."
         };
+
+        // Validate that the user has given 4 inputs
+        numbers.Validators.Add(result =>
+        {
+            double[] values = result.GetValueOrDefault<double[]>();
+            
+            if (values.Length != 4) 
+            {
+                result.AddError($"Please provide 4 numbers");
+            }
+        });
 
         RootCommand rootCommand = new("24 Game");
         rootCommand.Arguments.Add(numbers);
 
         rootCommand.SetAction(parseResult =>
         {
-            int[] result = parseResult.GetValue(numbers);
-            Console.WriteLine($"{String.Join(",", result)}");
+            double[] result = parseResult.GetValue(numbers)!;
+            Console.WriteLine($"Input: {String.Join(",", result)}");
             return 0;
         });
 
